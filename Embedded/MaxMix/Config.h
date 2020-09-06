@@ -24,10 +24,16 @@
 static const uint32_t BAUD_RATE = 115200;
 
 // --- Pins
-static const uint8_t  PIN_PIXELS = 12; //D12
-static const uint8_t  PIN_ENCODER_OUTA = 15; //A1
-static const uint8_t  PIN_ENCODER_OUTB = 16; //A2
-static const uint8_t  PIN_ENCODER_SWITCH = 17; //A3
+static const uint8_t  PIN_PIXELS = 3; //D12
+static const uint8_t  PIN_ENCODER_OUTA = 0; //A1 - CLK
+static const uint8_t  PIN_ENCODER_OUTB = 1; //A2 - DT
+static const uint8_t  PIN_ENCODER_SWITCH = 2; //A3 - SW
+
+// --- Teensy Config
+// Pins connected to the Teensy for the Keypad.
+// And their corresponding Function keys.
+static const byte btns[] = {9, 10, 11, 12, 14, 15, 16, 17};
+static const int k_fn[] = {KEY_F13, KEY_F14, KEY_F15, KEY_F16, KEY_F17, KEY_F18, KEY_F19, KEY_F20};
 
 // --- States
 static const uint8_t  MODE_MASTER = 0;

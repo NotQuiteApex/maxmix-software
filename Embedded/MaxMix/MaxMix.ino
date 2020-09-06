@@ -18,6 +18,11 @@
 // *** INCLUDES
 //********************************************************
 #include <Arduino.h>
+#include <Keyboard.h>
+#include <Bounce2.h>
+
+// Debouncing objects for reading switches with higher accuracy.
+Bounce deboun[8];
 
 // Custom
 #include "Config.h"
@@ -133,6 +138,16 @@ void setup()
   encoderRotary.begin(true);
   Timer1.initialize(1000);
   Timer1.attachInterrupt(timerIsr);
+
+  // --- "Keyboard"
+  for (byte i = 0; i < 8; i++) {
+    deboun[i] = Bounce();
+    deboun[i].attach(btns[i], INPUT_PULLDOWN);
+    deboun[i].interval(10);
+  }
+  // --- Teensy LED!
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
 }
 
 //---------------------------------------------------------
@@ -184,6 +199,16 @@ void loop()
 
   TimerDisplayUpdate(now - last);
   isDirty = false;
+
+  for (byte i = 0; i < 8; i++) {
+    deboun[i].update();
+        
+    if (deboun[i].rose()) {
+      Keyboard.press(k_fn[i]);
+    } else if (deboun[i].fell()) {
+      Keyboard.release(k_fn[i]);
+    }
+  }
 }
 
 //********************************************************

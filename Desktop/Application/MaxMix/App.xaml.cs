@@ -8,10 +8,12 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace MaxMix
 {
@@ -21,6 +23,7 @@ namespace MaxMix
     public partial class App : Application
     {
         IDisposable _errorReporter;
+        private static Mutex _singleInstanceMutex = null;
 
         private void InitErrorReporting()
         {
@@ -38,10 +41,29 @@ namespace MaxMix
             _errorReporter.Dispose();
         }
 
+        private bool IsApplicationRunning()
+        {
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+            _singleInstanceMutex = new Mutex(true, assemblyName, out bool mutexAcquired);
+            return mutexAcquired;
+        }
+
         private void ApplicationStartup(object sender, StartupEventArgs e)
         {
-            InitErrorReporting();
-            DispatcherUnhandledException += OnDispatcherUnhandledException;
+            if (!IsApplicationRunning())
+            {
+                // Application is already running
+                Debug.WriteLine("[App] Application is already running, exiting.");
+                Application.Current.Shutdown();
+                return;
+            }
+
+            if (!Debugger.IsAttached)
+            {
+                // Initialize error reporing only if not running from Visual Studio.
+                InitErrorReporting();
+                DispatcherUnhandledException += OnDispatcherUnhandledException;
+            }
 
             var window = new MainWindow();
 
@@ -64,8 +86,8 @@ namespace MaxMix
             // Calling dispose explicitly on closing so the icon dissapears from the windows task bar.
             var window = (MainWindow)Application.Current.MainWindow;            
             window.taskbarIcon.Dispose();
-
             _errorReporter.Dispose();
+            _singleInstanceMutex.Dispose();
 
             Application.Current.Shutdown();
         }

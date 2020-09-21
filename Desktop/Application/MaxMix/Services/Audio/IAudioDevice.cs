@@ -1,20 +1,36 @@
-﻿using CSCore.CoreAudioAPI;
+﻿using CSCore.Codecs.FLAC;
+using CSCore.CoreAudioAPI;
 using System;
 
 namespace MaxMix.Services.Audio
 {
-    public interface IAudioSession : IDisposable
+    public interface IAudioDevice : IDisposable
     {
         #region Properties
+        /// <summary>
+        /// 
+        /// </summary>
+        MMDevice Device { get; }
+
         /// <summary>
         /// The computed Identifier for this session.
         /// </summary>
         int Id { get; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        bool IsDefault { get; }
+
+        /// <summary>
         /// The display name of the process that created this session.
         /// </summary>
         string DisplayName { get; }
+
+        /// <summary>
+        /// The direction of the audio flow for this device, input for capture devices and output for render devices.
+        /// </summary>
+        DeviceFlow Flow { get; }
 
         /// <summary>
         /// Current volume of this session (0-100).
@@ -29,14 +45,19 @@ namespace MaxMix.Services.Audio
 
         #region Events
         /// <summary>
-        /// Raised when the volume for an active session has changed.
+        /// 
         /// </summary>
-        event Action<IAudioSession> VolumeChanged;
+        event Action<IAudioDevice> DeviceDefaultChanged;
 
         /// <summary>
-        /// Raised when a previously active audio session has been removed.
+        /// 
         /// </summary>
-        event Action<IAudioSession> SessionEnded;
+        event Action<IAudioDevice> DeviceRemoved;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        event Action<IAudioDevice> DeviceVolumeChanged;
         #endregion
     }
 }

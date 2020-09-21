@@ -1,11 +1,18 @@
-﻿namespace MaxMix.Services.Audio
+﻿using System;
+
+namespace MaxMix.Services.Audio
 {
     internal interface IAudioSessionService
     {
         void Start();
         void Stop();
-        void SetVisibleSystemSounds(bool visibleSystemSounds);
-        void SetSessionVolume(int id, int volume, bool isMuted);
+        void SetItemVolume(int id, int volume, bool isMuted);
+        void SetDefaultEndpoint(int id);
+
+        event DefaultAudioDeviceChangedDelegate DefaultDeviceChanged;
+        event AudioDeviceCreatedDelegate DeviceCreated;
+        event AudioDeviceRemovedDelegate DeviceRemoved;
+        event AudioDeviceVolumeDelegate DeviceVolumeChanged;
 
         event AudioSessionCreatedDelegate SessionCreated;
         event AudioSessionRemovedDelegate SessionRemoved;

@@ -19,7 +19,7 @@
 //********************************************************
 #include <Arduino.h>
 #include <Keyboard.h>
-#include <Bounce2.h>
+#include "src/Bounce2/Bounce2.h"
 
 // Debouncing objects for reading switches with higher accuracy.
 Bounce deboun[8];
